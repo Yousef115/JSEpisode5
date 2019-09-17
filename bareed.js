@@ -10,24 +10,24 @@
  * let point = new Point(x, y);
  ****************************************************************/
 class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 
-  distanceTo = point => {
-    let xDelta = this.x - point.x;
-    let yDelta = this.y - point.y;
-    return Math.sqrt(xDelta * xDelta + yDelta * yDelta); // PYTHAGORAS!
-  };
+    distanceTo = point => {
+        let xDelta = this.x - point.x;
+        let yDelta = this.y - point.y;
+        return Math.sqrt(xDelta * xDelta + yDelta * yDelta); // PYTHAGORAS!
+    };
 
-  equals = point => point.x === this.x && point.y === this.y;
+    equals = point => point.x === this.x && point.y === this.y;
 
-  static randomPoint = (maxX, maxY) => {
-    let x = Math.random() * (maxX || 100);
-    let y = Math.random() * (maxY || 100);
-    return new Point(x, y);
-  };
+    static randomPoint = (maxX, maxY) => {
+        let x = Math.random() * (maxX || 100);
+        let y = Math.random() * (maxY || 100);
+        return new Point(x, y);
+    };
 }
 
 /**********************************************************
@@ -42,14 +42,14 @@ class Point {
  * let wallet = new Wallet(money);
  **********************************************************/
 class Wallet {
-  // implement Wallet!
-  constructor(money = 0) {
-    this.money = money
-  }
+    // implement Wallet!
+    constructor(money = 0) {
+        this.money = money
+    }
 
-  credit = amount => {this.money += amount};
+    credit = amount => { this.money += amount };
 
-  debit = amount => {this.money -= amount};
+    debit = amount => { this.money -= amount };
 }
 
 /**********************************************************
@@ -64,15 +64,15 @@ class Wallet {
  * let person = new Person(name, x, y);
  **********************************************************/
 class Person {
-  constructor(name, x, y){
-    this.name = name;
-    this.location = new Point (x,y);
-    this.wallet = new Wallet(0);
-  }
+    constructor(name, x, y) {
+        this.name = name;
+        this.location = new Point(x, y);
+        this.wallet = new Wallet(0);
+    }
 
-  moveTo= point =>{
-    this.location = point
-  };
+    moveTo = point => {
+        this.location = point
+    };
 }
 
 /**********************************************************
@@ -91,16 +91,18 @@ class Person {
  * new vendor = new Vendor(name, x, y);
  **********************************************************/
 class Vendor extends Person {
-  constructor(name, x, y){
-    super(name, x, y)
-    this.range = 5;
-    this.price = 1;
-  }
-  sellTo = (customer, numberOfIceCreams) => {
-    this.moveTo(customer.location)
-    customer.wallet.debit(numberOfIceCreams*this.price)
-    this.wallet.credit(numberOfIceCreams*this.price)
-  }
+    constructor(name, x, y) {
+        super(name, x, y)
+    }
+
+    range = 5;
+    price = 1;
+
+    sellTo = (customer, numberOfIceCreams) => {
+        this.moveTo(customer.location)
+        customer.wallet.debit(numberOfIceCreams * this.price)
+        this.wallet.credit(numberOfIceCreams * this.price)
+    }
 
 }
 
@@ -120,15 +122,34 @@ class Vendor extends Person {
  *
  * new customer = new Customer(name, x, y);
  **********************************************************/
-class Customer extends Person{
-  constructor(name, x, y){
-    super(name, x, y);
-    this.wallet = new wallet(10);
+class Customer extends Person {
+    constructor(name, x, y) {
+        super(name, x, y)
+        this.wallet = new Wallet(10);
+    }
+    _isInRange = vendor => {
+        if (this.location.distanceTo(vendor.location) <= vendor.range) {
+            return true
+        } else return false
+    }
+
+    _haveEnoughMoney = (vendor, numberOfIceCreams) => {
+        let price = vendor.price * numberOfIceCreams;
+        if (this.wallet.money >= price) {
+            return true;
+        } else return false;
+    }
+
+    requestIceCream = (vendor, numberOfIceCreams) => {
+        if (this._isInRange(vendor) && this._haveEnoughMoney(vendor, numberOfIceCreams)) {
+            vendor.sellTo(this, numberOfIceCreams);
+        }
+
+    }
+
+
 }
-_isInRange = vendor =>{
-  
-}
-}
+
 
 export { Point, Wallet, Person, Customer, Vendor };
 
